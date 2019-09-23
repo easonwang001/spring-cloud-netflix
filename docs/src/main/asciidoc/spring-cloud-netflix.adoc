@@ -1,3 +1,6 @@
+include::_attributes.adoc[]
+
+
 :github-tag: master
 :github-repo: spring-cloud/spring-cloud-netflix
 :github-raw: https://raw.github.com/{github-repo}/{github-tag}
@@ -5,6 +8,7 @@
 :all: {asterisk}{asterisk}
 :nofooter:
 :branch: master
+
 = Spring Cloud Netflix
 
 *{spring-cloud-version}*
@@ -541,6 +545,34 @@ For more information on CSRF see the https://docs.spring.io/spring-security/site
 
 A demo Eureka Server can be found in the Spring Cloud Samples https://github.com/spring-cloud-samples/eureka/tree/Eureka-With-Security[repo].
 
+=== Disabling Ribbon with Eureka Server and Client starters
+
+`spring-cloud-starter-netflix-eureka-server` and `spring-cloud-starter-netflix-eureka-client` come along with
+a `spring-cloud-starter-netflix-ribbon`. Since Ribbon load-balancer is now in maintenance mode,
+we suggest switching to using the Spring Cloud LoadBalancer, also included in Eureka starters, instead.
+
+In order to that, you can set the value of `spring.cloud.loadbalancer.ribbon.enabled` property to `false`.
+
+You can then also exclude ribbon-related dependencies from Eureka starters in your build files, like so:
+
+[source,xml,indent=0]
+----
+<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.cloud</groupId>
+					<artifactId>spring-cloud-starter-ribbon</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.netflix.ribbon</groupId>
+					<artifactId>ribbon-eureka</artifactId>
+				</exclusion>
+			</exclusions>
+</dependency>
+----
+
 === JDK 11 Support
 
 The JAXB modules which the Eureka server depends upon were removed in JDK 11.  If you intend to use JDK 11
@@ -553,6 +585,10 @@ when running a Eureka server you must include these dependencies in your POM or 
 	<artifactId>jaxb-runtime</artifactId>
 </dependency>
 ----
+
+== Circuit Breaker: Spring Cloud Circuit Breaker With Hystrix
+
+include::spring-cloud-circuitbreaker-hystrix.adoc[]
 
 == Circuit Breaker: Hystrix Clients
 
@@ -888,7 +924,7 @@ Creating a bean of one of those type and placing it in a `@RibbonClient` configu
 
 [source,java,indent=0]
 ----
-include::../../../spring-cloud-netflix-ribbon/src/test/java/org/springframework/cloud/netflix/ribbon/RibbonClientsPreprocessorIntegrationTests.java[tags=sample_override_ribbon_config,indent=0]
+include::{project-root}/spring-cloud-netflix-ribbon/src/test/java/org/springframework/cloud/netflix/ribbon/RibbonClientsPreprocessorIntegrationTests.java[tags=sample_override_ribbon_config,indent=0]
 ----
 
 The include statement in the preceding example replaces `NoOpPing` with `PingUrl` and provides a custom `serverListFilter`.
@@ -899,7 +935,7 @@ A default configuration can be provided for all Ribbon Clients by using the `@Ri
 
 [source,java,indent=0]
 ----
-include::../../../spring-cloud-netflix-ribbon/src/test/java/org/springframework/cloud/netflix/ribbon/test/RibbonClientDefaultConfigurationTestsConfig.java[tags=sample_default_ribbon_config,indent=0]
+include::{project-root}/spring-cloud-netflix-ribbon/src/test/java/org/springframework/cloud/netflix/ribbon/test/RibbonClientDefaultConfigurationTestsConfig.java[tags=sample_default_ribbon_config,indent=0]
 
 ----
 
@@ -2162,4 +2198,10 @@ Doing so improperly can result in resource management issues.
 // TODO Can we provide a link to how to do so?
 
 include::maintenance-mode.adoc[]
+
+== Configuration properties
+
+To see the list of all Spring Cloud Netflix related configuration properties please check link:appendix.html[the Appendix page].
+
+
 
